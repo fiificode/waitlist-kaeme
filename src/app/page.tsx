@@ -33,10 +33,12 @@ const LoopIcon = ({ className }: { className?: string }) => (
 export default function LandingPage() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
+      setIsSubmitting(true);
       try {
         await fetch('/api/waitlist', {
           method: 'POST',
@@ -46,6 +48,7 @@ export default function LandingPage() {
       } catch (err) {
         // proceed to thank-you even if the request fails
       }
+      setIsSubmitting(false);
       setSubmitted(true);
     }
   };
@@ -135,9 +138,17 @@ export default function LandingPage() {
               {/* White uppercase button with thick shadow */}
               <button
                 type="submit"
-                className="bg-white hover:bg-slate-100 text-black border-2 border-black font-mono font-black uppercase px-6 py-4 text-xs tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all active:scale-95 cursor-pointer flex items-center justify-center min-h-[56px]"
+                disabled={isSubmitting}
+                className="bg-white hover:bg-slate-100 text-black border-2 border-black font-mono font-black uppercase px-6 py-4 text-xs tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all active:scale-95 cursor-pointer flex items-center justify-center min-h-[56px] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] disabled:hover:translate-x-0 disabled:hover:translate-y-0"
               >
-                GET EARLY ACCESS
+                {isSubmitting ? (
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                ) : (
+                  "GET EARLY ACCESS"
+                )}
               </button>
             </form>
           )}
